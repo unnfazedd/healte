@@ -1,0 +1,1266 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Health-E Meal Planner</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Sora:wght@400;600;700;800&display=swap" rel="stylesheet" />
+  <style>
+:root {
+  --bg: #06080d;
+  --bg-soft: #0d121b;
+  --surface: rgba(13, 19, 30, 0.82);
+  --surface-strong: rgba(18, 26, 40, 0.92);
+  --surface-alt: rgba(10, 15, 24, 0.94);
+  --ink: #eef4ff;
+  --muted: #a3b0c5;
+  --accent: #8fb0dc;
+  --accent-strong: #c8d7ee;
+  --accent-deep: #58759c;
+  --line: rgba(162, 181, 211, 0.18);
+  --glow: rgba(143, 176, 220, 0.22);
+  --shadow: 0 28px 80px rgba(0, 0, 0, 0.45);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  font-family: "Outfit", sans-serif;
+  color: var(--ink);
+  background:
+    radial-gradient(circle at top left, rgba(143, 176, 220, 0.16), transparent 26%),
+    radial-gradient(circle at 82% 18%, rgba(226, 234, 248, 0.12), transparent 14%),
+    radial-gradient(circle at bottom right, rgba(88, 117, 156, 0.18), transparent 20%),
+    linear-gradient(180deg, #020304 0%, var(--bg) 42%, #09101a 100%);
+}
+
+.page-shell {
+  width: min(1180px, calc(100% - 32px));
+  margin: 0 auto;
+  padding: 40px 0 56px;
+}
+
+.hero-card,
+.panel {
+  backdrop-filter: blur(18px);
+  background: var(--surface);
+  border: 1px solid var(--line);
+  box-shadow: var(--shadow);
+}
+
+.hero-card {
+  padding: 36px;
+  border-radius: 30px;
+  margin-bottom: 24px;
+  position: relative;
+  overflow: hidden;
+}
+
+.hero-card::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background:
+    linear-gradient(135deg, rgba(255, 255, 255, 0.06), transparent 35%),
+    radial-gradient(circle at top right, rgba(143, 176, 220, 0.22), transparent 28%);
+  pointer-events: none;
+}
+
+.hero-brand {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 320px;
+  gap: 28px;
+  align-items: center;
+}
+
+.hero-logo-wrap {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.hero-logo {
+  width: min(100%, 320px);
+  height: auto;
+  filter: drop-shadow(0 16px 32px rgba(0, 0, 0, 0.45));
+}
+
+.eyebrow {
+  margin: 0 0 10px;
+  color: var(--accent-strong);
+  text-transform: uppercase;
+  letter-spacing: 0.24em;
+  font-size: 0.72rem;
+  font-weight: 700;
+}
+
+h1,
+h2,
+h3 {
+  font-family: "Sora", sans-serif;
+  margin: 0;
+}
+
+h1 {
+  font-size: clamp(2.7rem, 5vw, 4.8rem);
+  line-height: 0.98;
+  margin-bottom: 14px;
+  max-width: 700px;
+}
+
+.hero-copy,
+.panel-heading p,
+.empty-state p,
+.meal-notes,
+.grocery-note,
+.summary-card p {
+  color: var(--muted);
+}
+
+.hero-copy {
+  max-width: 700px;
+  font-size: 1.05rem;
+  line-height: 1.7;
+}
+
+.hero-actions {
+  display: flex;
+  gap: 14px;
+  flex-wrap: wrap;
+  margin-top: 24px;
+}
+
+.hero-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 16px;
+  border-radius: 999px;
+  border: 1px solid rgba(162, 181, 211, 0.16);
+  background: rgba(255, 255, 255, 0.04);
+  color: var(--accent-strong);
+  font-size: 0.92rem;
+  font-weight: 600;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.04);
+}
+
+.hero-badge strong {
+  color: #ffffff;
+}
+
+.hero-highlights {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 14px;
+  margin-top: 24px;
+}
+
+.highlight-card {
+  padding: 18px;
+  border-radius: 22px;
+  border: 1px solid rgba(162, 181, 211, 0.14);
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.06), rgba(255, 255, 255, 0.02)),
+    rgba(5, 10, 18, 0.72);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.03);
+}
+
+.highlight-card strong {
+  display: block;
+  margin-bottom: 8px;
+  color: #f6f9ff;
+  font-size: 1.02rem;
+}
+
+.highlight-card span {
+  color: var(--muted);
+  line-height: 1.55;
+  font-size: 0.94rem;
+}
+
+.app-grid {
+  display: grid;
+  grid-template-columns: 420px minmax(0, 1fr);
+  gap: 24px;
+  align-items: start;
+}
+
+.panel {
+  border-radius: 26px;
+  padding: 26px;
+  position: relative;
+  overflow: hidden;
+}
+
+.panel::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.03), transparent 22%);
+  pointer-events: none;
+}
+
+.panel-heading {
+  margin-bottom: 22px;
+  position: relative;
+  z-index: 1;
+}
+
+.panel-heading h2 {
+  font-size: 2rem;
+  margin-bottom: 6px;
+}
+
+.field-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 16px;
+}
+
+label {
+  display: grid;
+  gap: 8px;
+  font-size: 0.95rem;
+  font-weight: 500;
+  color: #dbe5f7;
+}
+
+.field-full {
+  grid-column: 1 / -1;
+}
+
+input,
+select,
+button {
+  font: inherit;
+}
+
+input,
+select {
+  width: 100%;
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  padding: 14px 16px;
+  background: rgba(8, 12, 20, 0.82);
+  color: var(--ink);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.03);
+}
+
+input::placeholder {
+  color: #8090a8;
+}
+
+.inline-inputs {
+  display: grid;
+  grid-template-columns: 1fr auto 1fr auto;
+  gap: 8px;
+  align-items: center;
+}
+
+small {
+  color: var(--muted);
+}
+
+.primary-button {
+  margin-top: 22px;
+  width: 100%;
+  border: 0;
+  border-radius: 999px;
+  padding: 15px 18px;
+  font-weight: 700;
+  color: #06101d;
+  cursor: pointer;
+  background: linear-gradient(135deg, #eef4ff, #9ab8e2 52%, #6e8fb8 100%);
+  transition: transform 180ms ease, box-shadow 180ms ease;
+  box-shadow: 0 16px 32px rgba(111, 145, 188, 0.35);
+  position: relative;
+  overflow: hidden;
+}
+
+.primary-button:hover {
+  transform: translateY(-2px) scale(1.01);
+  box-shadow: 0 20px 40px rgba(111, 145, 188, 0.4);
+}
+
+.primary-button::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(120deg, transparent 20%, rgba(255, 255, 255, 0.36) 50%, transparent 80%);
+  transform: translateX(-120%);
+  transition: transform 260ms ease;
+}
+
+.primary-button:hover::after {
+  transform: translateX(120%);
+}
+
+.empty-state {
+  border: 1px dashed rgba(162, 181, 211, 0.22);
+  border-radius: 20px;
+  padding: 26px;
+  background: rgba(8, 12, 20, 0.44);
+}
+
+.hidden {
+  display: none;
+}
+
+.summary-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 14px;
+  margin-bottom: 22px;
+}
+
+.summary-card,
+.day-card,
+.grocery-card {
+  background: linear-gradient(180deg, rgba(20, 29, 43, 0.98), rgba(10, 15, 24, 0.96));
+  border: 1px solid rgba(162, 181, 211, 0.12);
+  border-radius: 20px;
+  padding: 18px;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.03);
+}
+
+.summary-card h3 {
+  font-size: 1rem;
+  margin-bottom: 10px;
+}
+
+.summary-card strong {
+  display: block;
+  font-size: 1.6rem;
+  margin-bottom: 6px;
+  color: var(--accent-strong);
+}
+
+.meal-plan {
+  display: grid;
+  gap: 16px;
+}
+
+.day-card-header {
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  align-items: baseline;
+  margin-bottom: 14px;
+}
+
+.form-panel {
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.05), transparent 28%),
+    linear-gradient(180deg, rgba(14, 21, 33, 0.95), rgba(8, 12, 20, 0.95));
+}
+
+.results-panel {
+  background:
+    radial-gradient(circle at top right, rgba(143, 176, 220, 0.1), transparent 22%),
+    linear-gradient(180deg, rgba(14, 21, 33, 0.96), rgba(7, 11, 18, 0.97));
+}
+
+.meal-list {
+  display: grid;
+  gap: 10px;
+}
+
+.meal-entry {
+  padding: 12px 14px;
+  border-radius: 16px;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(162, 181, 211, 0.08);
+  transition: transform 180ms ease, border-color 180ms ease, background 180ms ease;
+}
+
+.meal-entry:hover {
+  transform: translateY(-1px);
+  border-color: rgba(162, 181, 211, 0.18);
+  background: rgba(255, 255, 255, 0.045);
+}
+
+.meal-entry strong {
+  display: block;
+  margin-bottom: 5px;
+}
+
+.recipe-details {
+  margin-top: 10px;
+  padding-top: 10px;
+  border-top: 1px solid rgba(162, 181, 211, 0.12);
+}
+
+.recipe-details summary {
+  cursor: pointer;
+  font-weight: 700;
+  color: var(--accent-strong);
+}
+
+.recipe-details ol {
+  margin: 10px 0 0;
+  padding-left: 18px;
+  color: var(--muted);
+}
+
+.recipe-details li + li {
+  margin-top: 6px;
+}
+
+.grocery-list {
+  margin-top: 22px;
+}
+
+.grocery-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 14px;
+}
+
+.grocery-card h3 {
+  margin-bottom: 10px;
+}
+
+.grocery-card ul {
+  margin: 0;
+  padding-left: 18px;
+  color: var(--muted);
+}
+
+.grocery-card li + li {
+  margin-top: 6px;
+}
+
+.results {
+  position: relative;
+  z-index: 1;
+}
+
+.panel-heading h2,
+.day-card-header h3,
+.grocery-card h3 {
+  color: var(--accent-strong);
+}
+
+.day-card-header span {
+  color: var(--muted);
+}
+
+select:focus,
+input:focus {
+  outline: none;
+  border-color: rgba(143, 176, 220, 0.65);
+  box-shadow: 0 0 0 4px var(--glow);
+}
+
+@media (max-width: 980px) {
+  .hero-brand {
+    grid-template-columns: 1fr;
+  }
+
+  .hero-logo-wrap {
+    justify-content: flex-start;
+  }
+
+  .hero-highlights {
+    grid-template-columns: 1fr;
+  }
+
+  .app-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .summary-grid,
+  .grocery-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 640px) {
+  .page-shell {
+    width: min(100% - 20px, 100%);
+    padding-top: 20px;
+  }
+
+  .hero-card,
+  .panel {
+    padding: 20px;
+    border-radius: 20px;
+  }
+
+  .hero-actions {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .hero-logo {
+    width: min(100%, 240px);
+  }
+
+  .field-grid,
+  .summary-grid,
+  .grocery-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .inline-inputs {
+    grid-template-columns: 1fr auto;
+  }
+
+  .inline-inputs input:nth-of-type(2) {
+    grid-column: 1 / 2;
+  }
+}
+  </style>
+</head>
+<body>
+  <main class="page-shell">
+    <section class="hero-card">
+      <div class="hero-brand">
+        <div>
+          <p class="eyebrow">Health-E Nutrition System</p>
+          <h1>Personalized meal planning with a premium coaching feel.</h1>
+          <p class="hero-copy">
+            Answer a few questions about your body, goals, and eating style. Health-E
+            maps out your calorie targets, a full 7-day meal plan, simple recipes,
+            and a supermarket list with the amounts to buy.
+          </p>
+          <div class="hero-actions">
+            <div class="hero-badge"><strong>7-day</strong> guided meal map</div>
+            <div class="hero-badge"><strong>Smart</strong> grocery quantity totals</div>
+            <div class="hero-badge"><strong>Built for</strong> coaching-style delivery</div>
+          </div>
+        </div>
+        <div class="hero-logo-wrap">
+          <img class="hero-logo" src="health-e-logo.png" alt="Health-E logo" />
+        </div>
+      </div>
+      <div class="hero-highlights">
+        <article class="highlight-card">
+          <strong>Personalized targets</strong>
+          <span>Calories and macros adjust around body stats, activity, and desired weight outcome.</span>
+        </article>
+        <article class="highlight-card">
+          <strong>Recipes included</strong>
+          <span>Each recommended meal can expand into quick step-by-step instructions for easier follow-through.</span>
+        </article>
+        <article class="highlight-card">
+          <strong>Shopping clarity</strong>
+          <span>Weekly ingredient totals are grouped into a cleaner supermarket list so clients know what to buy.</span>
+        </article>
+      </div>
+    </section>
+
+    <section class="app-grid">
+      <form id="meal-form" class="panel form-panel">
+        <div class="panel-heading">
+          <h2>Your profile</h2>
+          <p>These answers guide calories, protein, meal size, and grocery totals.</p>
+        </div>
+
+        <div class="field-grid">
+          <label>
+            <span>Age</span>
+            <input type="number" name="age" min="15" max="90" value="28" required />
+          </label>
+
+          <label>
+            <span>Gender</span>
+            <select name="gender" required>
+              <option value="female">Female</option>
+              <option value="male">Male</option>
+            </select>
+          </label>
+
+          <label>
+            <span>Height</span>
+            <div class="inline-inputs">
+              <input type="number" name="heightFeet" min="3" max="8" value="5" required />
+              <small>ft</small>
+              <input type="number" name="heightInches" min="0" max="11" value="7" required />
+              <small>in</small>
+            </div>
+          </label>
+
+          <label>
+            <span>Current weight</span>
+            <div class="inline-inputs">
+              <input type="number" name="weight" min="70" max="500" value="170" required />
+              <small>lb</small>
+            </div>
+          </label>
+
+          <label>
+            <span>Goal weight</span>
+            <div class="inline-inputs">
+              <input type="number" name="goalWeight" min="70" max="500" value="155" required />
+              <small>lb</small>
+            </div>
+          </label>
+
+          <label>
+            <span>Activity level</span>
+            <select name="activity" required>
+              <option value="1.2">Mostly sedentary</option>
+              <option value="1.375">Light exercise</option>
+              <option value="1.55" selected>Moderate exercise</option>
+              <option value="1.725">Heavy training</option>
+              <option value="1.9">Athlete / very active</option>
+            </select>
+          </label>
+
+          <label>
+            <span>Weight goal</span>
+            <select name="goal" required>
+              <option value="lose">Lose weight</option>
+              <option value="maintain">Maintain</option>
+              <option value="gain">Gain muscle / weight</option>
+            </select>
+          </label>
+
+          <label>
+            <span>Meals per day</span>
+            <select name="mealsPerDay" required>
+              <option value="3">3 meals</option>
+              <option value="4" selected>4 meals</option>
+              <option value="5">5 meals</option>
+            </select>
+          </label>
+
+          <label>
+            <span>Diet style</span>
+            <select name="diet" required>
+              <option value="balanced" selected>Balanced</option>
+              <option value="highProtein">High protein</option>
+              <option value="vegetarian">Vegetarian</option>
+            </select>
+          </label>
+
+          <label class="field-full">
+            <span>Foods to avoid</span>
+            <input
+              type="text"
+              name="avoid"
+              placeholder="Example: shrimp, mushrooms, peanuts"
+            />
+          </label>
+
+          <label class="field-full">
+            <span>Preferred supermarket</span>
+            <input
+              type="text"
+              name="store"
+              placeholder="Example: Walmart, Aldi, Trader Joe's"
+            />
+          </label>
+        </div>
+
+        <button type="submit" class="primary-button">Generate meal plan</button>
+      </form>
+
+      <section class="panel results-panel">
+        <div class="panel-heading">
+          <h2>Your plan</h2>
+          <p>Targets, meals, and a weekly shopping list will appear here.</p>
+        </div>
+
+        <div id="empty-state" class="empty-state">
+          <h3>Ready when you are</h3>
+          <p>Fill out the form and the planner will create a full week of meals.</p>
+        </div>
+
+        <div id="results" class="results hidden">
+          <section id="summary" class="summary-grid"></section>
+          <section id="meal-plan" class="meal-plan"></section>
+          <section id="grocery-list" class="grocery-list"></section>
+        </div>
+      </section>
+    </section>
+  </main>
+
+  <script>
+const DAYS = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"];
+
+const MEAL_LIBRARY = {
+  balanced: {
+    breakfast: [
+      createMeal("Greek yogurt berry bowl", ["Greek yogurt", "berries", "granola", "chia seeds"], { protein: 33, carbs: 39, fat: 12, calories: 390 }, { dairy: 1, berriesCup: 1, granolaCup: 0.5, chiaTbsp: 1 }),
+      createMeal("Eggs and oatmeal", ["eggs", "oats", "banana", "peanut butter"], { protein: 29, carbs: 41, fat: 17, calories: 430 }, { eggs: 3, oatsCupDry: 0.75, banana: 1, peanutButterTbsp: 1 }),
+      createMeal("Protein smoothie", ["protein powder", "milk", "banana", "spinach", "oats"], { protein: 36, carbs: 44, fat: 8, calories: 400 }, { proteinScoops: 1, milkCup: 1.5, banana: 1, spinachCup: 1, oatsCupDry: 0.5 })
+    ],
+    lunch: [
+      createMeal("Chicken rice bowl", ["chicken breast", "rice", "broccoli", "olive oil"], { protein: 45, carbs: 54, fat: 14, calories: 520 }, { chickenOz: 6, riceCupCooked: 1.25, broccoliCup: 1.5, oliveOilTbsp: 1 }),
+      createMeal("Turkey wrap combo", ["turkey", "whole wheat wrap", "hummus", "apple", "mixed greens"], { protein: 37, carbs: 48, fat: 16, calories: 500 }, { turkeyOz: 5, wraps: 1, hummusTbsp: 3, apple: 1, greensCup: 1.5 }),
+      createMeal("Salmon quinoa plate", ["salmon", "quinoa", "asparagus", "olive oil"], { protein: 39, carbs: 36, fat: 22, calories: 510 }, { salmonOz: 6, quinoaCupCooked: 1, asparagusCup: 1.5, oliveOilTbsp: 1 })
+    ],
+    dinner: [
+      createMeal("Lean beef sweet potato skillet", ["lean ground beef", "sweet potato", "bell peppers", "onion"], { protein: 42, carbs: 38, fat: 18, calories: 500 }, { groundBeefOz: 6, sweetPotato: 1, bellPepper: 1, onion: 0.5 }),
+      createMeal("Chicken pasta dinner", ["chicken breast", "pasta", "marinara", "zucchini"], { protein: 43, carbs: 50, fat: 10, calories: 490 }, { chickenOz: 6, pastaCupCooked: 1.5, marinaraCup: 0.75, zucchini: 1 }),
+      createMeal("Shrimp rice stir-fry", ["shrimp", "rice", "mixed vegetables", "soy sauce"], { protein: 38, carbs: 46, fat: 9, calories: 430 }, { shrimpOz: 6, riceCupCooked: 1.25, mixedVegCup: 1.5, soySauceTbsp: 1 })
+    ],
+    snack: [
+      createMeal("Cottage cheese and pineapple", ["cottage cheese", "pineapple"], { protein: 22, carbs: 18, fat: 4, calories: 190 }, { cottageCheeseCup: 1, pineappleCup: 1 }),
+      createMeal("Protein bar and orange", ["protein bar", "orange"], { protein: 20, carbs: 28, fat: 7, calories: 250 }, { proteinBars: 1, orange: 1 }),
+      createMeal("Rice cakes with peanut butter", ["rice cakes", "peanut butter"], { protein: 9, carbs: 20, fat: 10, calories: 210 }, { riceCakes: 3, peanutButterTbsp: 1.5 })
+    ]
+  },
+  highProtein: {
+    breakfast: [
+      createMeal("Egg white scramble and toast", ["egg whites", "whole eggs", "toast", "avocado"], { protein: 37, carbs: 28, fat: 15, calories: 410 }, { eggWhitesCup: 1, eggs: 2, breadSlices: 2, avocado: 0.5 }),
+      createMeal("Protein oats", ["oats", "protein powder", "blueberries", "almonds"], { protein: 35, carbs: 40, fat: 11, calories: 395 }, { oatsCupDry: 0.75, proteinScoops: 1, berriesCup: 1, almondsOz: 0.5 }),
+      createMeal("Turkey breakfast sandwich", ["turkey", "eggs", "English muffin", "cheese"], { protein: 34, carbs: 29, fat: 14, calories: 405 }, { turkeyOz: 4, eggs: 2, englishMuffin: 1, cheeseSlices: 1 })
+    ],
+    lunch: [
+      createMeal("Double chicken salad", ["chicken breast", "mixed greens", "chickpeas", "olive oil"], { protein: 50, carbs: 27, fat: 16, calories: 470 }, { chickenOz: 7, greensCup: 3, chickpeasCup: 0.75, oliveOilTbsp: 1 }),
+      createMeal("Tuna rice bowl", ["tuna", "rice", "cucumber", "edamame"], { protein: 44, carbs: 42, fat: 8, calories: 430 }, { tunaCans: 1.5, riceCupCooked: 1, cucumber: 0.5, edamameCup: 1 }),
+      createMeal("Turkey chili", ["lean ground turkey", "beans", "tomatoes", "onion"], { protein: 46, carbs: 33, fat: 12, calories: 445 }, { turkeyOz: 7, beansCup: 1, cannedTomatoesCup: 1, onion: 0.5 })
+    ],
+    dinner: [
+      createMeal("Steak and potatoes", ["sirloin steak", "potatoes", "green beans"], { protein: 48, carbs: 36, fat: 17, calories: 510 }, { steakOz: 7, potato: 1.5, greenBeansCup: 1.5 }),
+      createMeal("Chicken fajita bowl", ["chicken breast", "rice", "bell peppers", "Greek yogurt"], { protein: 47, carbs: 44, fat: 10, calories: 465 }, { chickenOz: 7, riceCupCooked: 1, bellPepper: 1.5, greekYogurtCup: 0.5 }),
+      createMeal("Salmon lentil plate", ["salmon", "lentils", "spinach"], { protein: 43, carbs: 30, fat: 18, calories: 480 }, { salmonOz: 6, lentilsCupCooked: 1, spinachCup: 2 })
+    ],
+    snack: [
+      createMeal("Greek yogurt protein cup", ["Greek yogurt", "protein powder", "berries"], { protein: 31, carbs: 18, fat: 2, calories: 220 }, { dairy: 1, proteinScoops: 0.5, berriesCup: 0.75 }),
+      createMeal("Jerky and apple", ["beef jerky", "apple"], { protein: 16, carbs: 26, fat: 2, calories: 180 }, { jerkyOz: 2, apple: 1 }),
+      createMeal("Cottage cheese bowl", ["cottage cheese", "walnuts", "cinnamon"], { protein: 24, carbs: 8, fat: 11, calories: 220 }, { cottageCheeseCup: 1, walnutsOz: 0.5 })
+    ]
+  },
+  vegetarian: {
+    breakfast: [
+      createMeal("Overnight oats", ["oats", "milk", "chia seeds", "berries"], { protein: 20, carbs: 44, fat: 12, calories: 360 }, { oatsCupDry: 0.75, milkCup: 1.25, chiaTbsp: 1.5, berriesCup: 1 }),
+      createMeal("Greek yogurt parfait", ["Greek yogurt", "banana", "granola", "almonds"], { protein: 28, carbs: 42, fat: 11, calories: 390 }, { dairy: 1, banana: 1, granolaCup: 0.5, almondsOz: 0.5 }),
+      createMeal("Veggie egg scramble", ["eggs", "spinach", "mushrooms", "toast"], { protein: 26, carbs: 24, fat: 16, calories: 360 }, { eggs: 3, spinachCup: 1.5, mushroomsCup: 1, breadSlices: 2 })
+    ],
+    lunch: [
+      createMeal("Tofu rice bowl", ["tofu", "rice", "broccoli", "sesame oil"], { protein: 27, carbs: 46, fat: 14, calories: 410 }, { tofuBlocks: 0.5, riceCupCooked: 1.25, broccoliCup: 1.5, sesameOilTbsp: 1 }),
+      createMeal("Lentil quinoa salad", ["lentils", "quinoa", "cucumber", "feta"], { protein: 25, carbs: 43, fat: 13, calories: 395 }, { lentilsCupCooked: 1, quinoaCupCooked: 1, cucumber: 1, fetaCup: 0.5 }),
+      createMeal("Black bean wrap", ["black beans", "whole wheat wrap", "avocado", "corn"], { protein: 22, carbs: 49, fat: 15, calories: 420 }, { blackBeansCup: 1, wraps: 1, avocado: 0.5, cornCup: 0.75 })
+    ],
+    dinner: [
+      createMeal("Chickpea pasta bowl", ["chickpea pasta", "marinara", "zucchini", "Parmesan"], { protein: 29, carbs: 51, fat: 10, calories: 430 }, { chickpeaPastaCupCooked: 1.5, marinaraCup: 0.75, zucchini: 1, parmesanTbsp: 2 }),
+      createMeal("Paneer veggie skillet", ["paneer", "bell peppers", "rice", "spinach"], { protein: 28, carbs: 35, fat: 18, calories: 440 }, { paneerOz: 5, bellPepper: 1.5, riceCupCooked: 1, spinachCup: 2 }),
+      createMeal("Tofu stir-fry", ["tofu", "mixed vegetables", "rice noodles", "soy sauce"], { protein: 25, carbs: 47, fat: 12, calories: 415 }, { tofuBlocks: 0.5, mixedVegCup: 2, riceNoodlesCupCooked: 1.25, soySauceTbsp: 1 })
+    ],
+    snack: [
+      createMeal("Apple and peanut butter", ["apple", "peanut butter"], { protein: 7, carbs: 28, fat: 9, calories: 210 }, { apple: 1, peanutButterTbsp: 1.5 }),
+      createMeal("Cottage cheese and berries", ["cottage cheese", "berries"], { protein: 22, carbs: 14, fat: 4, calories: 180 }, { cottageCheeseCup: 1, berriesCup: 1 }),
+      createMeal("Trail mix", ["nuts", "raisins"], { protein: 8, carbs: 18, fat: 14, calories: 220 }, { nutsOz: 1, raisinsOz: 0.75 })
+    ]
+  }
+};
+
+const RECIPE_LIBRARY = {
+  "Greek yogurt berry bowl": [
+    "Add Greek yogurt to a bowl.",
+    "Top with berries, granola, and chia seeds.",
+    "Stir lightly or keep layered and serve cold."
+  ],
+  "Eggs and oatmeal": [
+    "Cook oats with water or milk until soft.",
+    "Scramble or fry the eggs in a nonstick pan.",
+    "Serve with sliced banana and peanut butter on the side or stirred into the oats."
+  ],
+  "Protein smoothie": [
+    "Add milk, protein powder, banana, spinach, and oats to a blender.",
+    "Blend until smooth and creamy.",
+    "Pour immediately and serve cold."
+  ],
+  "Chicken rice bowl": [
+    "Season and cook the chicken until done, then slice it.",
+    "Serve over cooked rice with steamed broccoli.",
+    "Finish with olive oil or your favorite simple seasoning."
+  ],
+  "Turkey wrap combo": [
+    "Spread hummus over the wrap.",
+    "Layer turkey and mixed greens, then roll tightly.",
+    "Serve with an apple on the side."
+  ],
+  "Salmon quinoa plate": [
+    "Bake or pan-sear the salmon until flaky.",
+    "Cook quinoa and steam or roast the asparagus.",
+    "Plate everything together and drizzle with olive oil."
+  ],
+  "Lean beef sweet potato skillet": [
+    "Cook the sweet potato until tender and dice it.",
+    "Brown the lean beef with onion and bell pepper.",
+    "Mix everything together in one skillet and season to taste."
+  ],
+  "Chicken pasta dinner": [
+    "Cook the pasta and warm the marinara sauce.",
+    "Cook and slice the chicken breast.",
+    "Combine pasta, chicken, marinara, and sauteed zucchini."
+  ],
+  "Shrimp rice stir-fry": [
+    "Cook the shrimp until pink and set aside.",
+    "Stir-fry mixed vegetables in a pan.",
+    "Add cooked rice, shrimp, and soy sauce, then toss together."
+  ],
+  "Cottage cheese and pineapple": [
+    "Spoon cottage cheese into a bowl.",
+    "Top with pineapple.",
+    "Serve chilled."
+  ],
+  "Protein bar and orange": [
+    "Unwrap the protein bar.",
+    "Wash or peel the orange.",
+    "Serve as a quick snack."
+  ],
+  "Rice cakes with peanut butter": [
+    "Spread peanut butter over the rice cakes.",
+    "Add fruit or cinnamon if desired.",
+    "Serve immediately."
+  ],
+  "Egg white scramble and toast": [
+    "Cook egg whites and whole eggs together in a skillet.",
+    "Toast the bread and slice the avocado.",
+    "Serve the scramble with toast and avocado."
+  ],
+  "Protein oats": [
+    "Cook the oats until thick and soft.",
+    "Stir in protein powder after cooking.",
+    "Top with blueberries and almonds."
+  ],
+  "Turkey breakfast sandwich": [
+    "Cook the eggs to your preference.",
+    "Warm the turkey and toast the English muffin.",
+    "Layer egg, turkey, and cheese into a sandwich."
+  ],
+  "Double chicken salad": [
+    "Cook and slice the chicken breast.",
+    "Add greens and chickpeas to a large bowl.",
+    "Top with chicken and olive oil dressing."
+  ],
+  "Tuna rice bowl": [
+    "Cook the rice and prepare the edamame.",
+    "Slice the cucumber.",
+    "Layer rice, tuna, cucumber, and edamame in a bowl."
+  ],
+  "Turkey chili": [
+    "Brown the lean turkey with onion.",
+    "Add beans and tomatoes, then simmer until thick.",
+    "Taste and adjust seasoning before serving."
+  ],
+  "Steak and potatoes": [
+    "Roast or boil the potatoes until tender.",
+    "Cook the steak to your preferred doneness.",
+    "Serve with cooked green beans."
+  ],
+  "Chicken fajita bowl": [
+    "Cook the chicken with sliced bell peppers.",
+    "Build a bowl with rice as the base.",
+    "Top with the chicken mixture and Greek yogurt."
+  ],
+  "Salmon lentil plate": [
+    "Cook or reheat lentils until warm.",
+    "Cook the salmon until flaky.",
+    "Serve with spinach on the side or wilted into the lentils."
+  ],
+  "Greek yogurt protein cup": [
+    "Add Greek yogurt to a bowl.",
+    "Mix in protein powder until smooth.",
+    "Top with berries and serve cold."
+  ],
+  "Jerky and apple": [
+    "Portion the jerky.",
+    "Wash and slice the apple if preferred.",
+    "Serve as a grab-and-go snack."
+  ],
+  "Cottage cheese bowl": [
+    "Add cottage cheese to a bowl.",
+    "Top with walnuts and a pinch of cinnamon.",
+    "Serve chilled."
+  ],
+  "Overnight oats": [
+    "Mix oats, milk, and chia seeds in a jar or bowl.",
+    "Refrigerate overnight.",
+    "Top with berries before eating."
+  ],
+  "Greek yogurt parfait": [
+    "Add Greek yogurt to a glass or bowl.",
+    "Layer with banana slices and granola.",
+    "Finish with almonds on top."
+  ],
+  "Veggie egg scramble": [
+    "Saute spinach and mushrooms until softened.",
+    "Add eggs and scramble together.",
+    "Serve with toast."
+  ],
+  "Tofu rice bowl": [
+    "Cook tofu in a skillet until golden.",
+    "Steam the broccoli and prepare the rice.",
+    "Serve together with a little sesame oil."
+  ],
+  "Lentil quinoa salad": [
+    "Cook the lentils and quinoa if not already prepared.",
+    "Chop the cucumber and combine everything in a bowl.",
+    "Finish with feta and light seasoning."
+  ],
+  "Black bean wrap": [
+    "Warm the wrap and black beans.",
+    "Fill with beans, avocado, and corn.",
+    "Roll tightly and serve."
+  ],
+  "Chickpea pasta bowl": [
+    "Cook the chickpea pasta.",
+    "Warm the marinara and saute the zucchini.",
+    "Combine and finish with Parmesan."
+  ],
+  "Paneer veggie skillet": [
+    "Cook the paneer until lightly golden.",
+    "Saute bell peppers and spinach.",
+    "Serve with cooked rice."
+  ],
+  "Tofu stir-fry": [
+    "Cook tofu until firm and lightly crisp.",
+    "Stir-fry mixed vegetables and cook the rice noodles.",
+    "Toss everything together with soy sauce."
+  ],
+  "Apple and peanut butter": [
+    "Slice the apple.",
+    "Portion the peanut butter for dipping.",
+    "Serve immediately."
+  ],
+  "Cottage cheese and berries": [
+    "Add cottage cheese to a bowl.",
+    "Top with berries.",
+    "Serve chilled."
+  ],
+  "Trail mix": [
+    "Combine nuts and raisins in a bowl or container.",
+    "Portion into a snack-sized serving.",
+    "Store the extra for later."
+  ]
+};
+
+const GROCERY_LABELS = {
+  dairy: "32 oz Greek yogurt tub",
+  berriesCup: "cup berries",
+  granolaCup: "cup granola",
+  chiaTbsp: "tbsp chia seeds",
+  eggs: "large egg",
+  oatsCupDry: "cup dry oats",
+  banana: "banana",
+  peanutButterTbsp: "tbsp peanut butter",
+  proteinScoops: "scoop protein powder",
+  milkCup: "cup milk",
+  spinachCup: "cup spinach",
+  chickenOz: "oz chicken breast",
+  riceCupCooked: "cup cooked rice",
+  broccoliCup: "cup broccoli",
+  oliveOilTbsp: "tbsp olive oil",
+  turkeyOz: "oz turkey",
+  wraps: "large tortilla wrap",
+  hummusTbsp: "tbsp hummus",
+  apple: "apple",
+  greensCup: "cup mixed greens",
+  salmonOz: "oz salmon",
+  quinoaCupCooked: "cup cooked quinoa",
+  asparagusCup: "cup asparagus",
+  groundBeefOz: "oz lean ground beef",
+  sweetPotato: "sweet potato",
+  bellPepper: "bell pepper",
+  onion: "yellow onion",
+  pastaCupCooked: "cup cooked pasta",
+  marinaraCup: "cup marinara sauce",
+  zucchini: "zucchini",
+  shrimpOz: "oz shrimp",
+  mixedVegCup: "cup mixed vegetables",
+  soySauceTbsp: "tbsp soy sauce",
+  cottageCheeseCup: "cup cottage cheese",
+  pineappleCup: "cup pineapple",
+  proteinBars: "protein bar",
+  orange: "orange",
+  riceCakes: "rice cake",
+  eggWhitesCup: "cup egg whites",
+  breadSlices: "slice whole grain bread",
+  avocado: "avocado",
+  almondsOz: "oz almonds",
+  englishMuffin: "English muffin",
+  cheeseSlices: "slice cheese",
+  chickpeasCup: "cup chickpeas",
+  tunaCans: "can tuna",
+  cucumber: "cucumber",
+  edamameCup: "cup edamame",
+  beansCup: "cup beans",
+  cannedTomatoesCup: "cup canned tomatoes",
+  steakOz: "oz sirloin steak",
+  potato: "medium potato",
+  greenBeansCup: "cup green beans",
+  greekYogurtCup: "cup Greek yogurt",
+  lentilsCupCooked: "cup cooked lentils",
+  jerkyOz: "oz beef jerky",
+  walnutsOz: "oz walnuts",
+  tofuBlocks: "14 oz tofu block",
+  sesameOilTbsp: "tbsp sesame oil",
+  fetaCup: "cup feta",
+  blackBeansCup: "cup black beans",
+  cornCup: "cup corn",
+  chickpeaPastaCupCooked: "cup cooked chickpea pasta",
+  parmesanTbsp: "tbsp Parmesan",
+  paneerOz: "oz paneer",
+  riceNoodlesCupCooked: "cup cooked rice noodles",
+  mushroomsCup: "cup mushrooms",
+  nutsOz: "oz mixed nuts",
+  raisinsOz: "oz raisins"
+};
+
+const CATEGORY_MAP = {
+  Protein: ["dairy", "eggs", "eggWhitesCup", "chickenOz", "turkeyOz", "salmonOz", "groundBeefOz", "shrimpOz", "proteinScoops", "cottageCheeseCup", "proteinBars", "tunaCans", "steakOz", "lentilsCupCooked", "tofuBlocks", "paneerOz", "beansCup", "blackBeansCup", "chickpeasCup", "greekYogurtCup", "jerkyOz", "cheeseSlices", "fetaCup", "parmesanTbsp"],
+  Produce: ["berriesCup", "banana", "broccoliCup", "apple", "greensCup", "asparagusCup", "sweetPotato", "bellPepper", "onion", "zucchini", "mixedVegCup", "pineappleCup", "orange", "avocado", "cucumber", "greenBeansCup", "spinachCup", "cornCup", "mushroomsCup"],
+  Carbs: ["granolaCup", "oatsCupDry", "riceCupCooked", "wraps", "quinoaCupCooked", "pastaCupCooked", "riceCakes", "breadSlices", "englishMuffin", "potato", "chickpeaPastaCupCooked", "riceNoodlesCupCooked", "raisinsOz"],
+  Pantry: ["chiaTbsp", "peanutButterTbsp", "oliveOilTbsp", "soySauceTbsp", "almondsOz", "sesameOilTbsp", "walnutsOz", "nutsOz"]
+};
+
+const form = document.getElementById("meal-form");
+const emptyState = document.getElementById("empty-state");
+const results = document.getElementById("results");
+const summary = document.getElementById("summary");
+const mealPlan = document.getElementById("meal-plan");
+const groceryList = document.getElementById("grocery-list");
+
+form.addEventListener("submit", (event) => {
+  event.preventDefault();
+  const profile = readFormData(new FormData(form));
+  const plan = generatePlan(profile);
+  renderPlan(profile, plan);
+});
+
+function createMeal(name, ingredients, macros, grocery) {
+  return { name, ingredients, macros, grocery };
+}
+
+function readFormData(formData) {
+  return {
+    age: Number(formData.get("age")),
+    gender: String(formData.get("gender")),
+    heightFeet: Number(formData.get("heightFeet")),
+    heightInches: Number(formData.get("heightInches")),
+    weight: Number(formData.get("weight")),
+    goalWeight: Number(formData.get("goalWeight")),
+    activity: Number(formData.get("activity")),
+    goal: String(formData.get("goal")),
+    mealsPerDay: Number(formData.get("mealsPerDay")),
+    diet: String(formData.get("diet")),
+    avoid: String(formData.get("avoid") || "")
+      .split(",")
+      .map((item) => item.trim().toLowerCase())
+      .filter(Boolean),
+    store: String(formData.get("store") || "").trim()
+  };
+}
+
+function generatePlan(profile) {
+  const stats = calculateTargets(profile);
+  const meals = buildWeeklyMeals(profile);
+  const grocery = buildGroceryList(meals);
+  return { stats, meals, grocery };
+}
+
+function calculateTargets(profile) {
+  const heightCm = ((profile.heightFeet * 12) + profile.heightInches) * 2.54;
+  const weightKg = profile.weight * 0.453592;
+  const weightDelta = profile.goalWeight - profile.weight;
+  const bmr = profile.gender === "male"
+    ? (10 * weightKg) + (6.25 * heightCm) - (5 * profile.age) + 5
+    : (10 * weightKg) + (6.25 * heightCm) - (5 * profile.age) - 161;
+
+  let calories = bmr * profile.activity;
+  const adjustmentScale = Math.min(Math.abs(weightDelta) * 12, 500);
+  if (profile.goal === "lose") calories -= Math.max(250, adjustmentScale);
+  if (profile.goal === "gain") calories += Math.max(180, adjustmentScale * 0.75);
+
+  calories = Math.max(1400, Math.round(calories / 10) * 10);
+
+  const proteinMultiplier = profile.goal === "gain" ? 1.0 : 0.85;
+  const protein = Math.round(profile.weight * proteinMultiplier);
+  const fat = Math.round((calories * 0.28) / 9);
+  const carbs = Math.round((calories - (protein * 4) - (fat * 9)) / 4);
+  const weeklyPace = profile.goal === "maintain" ? 0 : 1;
+  const estimatedWeeks = weeklyPace === 0 ? 0 : Math.max(1, Math.ceil(Math.abs(weightDelta) / weeklyPace));
+
+  return { calories, protein, carbs, fat, weightDelta, estimatedWeeks };
+}
+
+function buildWeeklyMeals(profile) {
+  const source = MEAL_LIBRARY[profile.diet] || MEAL_LIBRARY.balanced;
+  const mealTypes = getMealTypes(profile.mealsPerDay);
+  const filteredSource = filterMeals(source, profile.avoid);
+
+  return DAYS.map((day, index) => {
+    const entries = mealTypes.map((type, typeIndex) => {
+      const options = filteredSource[type];
+      const meal = options[(index + typeIndex) % options.length];
+      return { type, ...meal };
+    });
+
+    const totals = entries.reduce((accumulator, entry) => {
+      accumulator.calories += entry.macros.calories;
+      accumulator.protein += entry.macros.protein;
+      accumulator.carbs += entry.macros.carbs;
+      accumulator.fat += entry.macros.fat;
+      return accumulator;
+    }, { calories: 0, protein: 0, carbs: 0, fat: 0 });
+
+    return { day, entries, totals };
+  });
+}
+
+function getMealTypes(mealsPerDay) {
+  if (mealsPerDay === 3) return ["breakfast", "lunch", "dinner"];
+  if (mealsPerDay === 5) return ["breakfast", "snack", "lunch", "snack", "dinner"];
+  return ["breakfast", "lunch", "snack", "dinner"];
+}
+
+function filterMeals(source, avoidTerms) {
+  const fallback = MEAL_LIBRARY.balanced;
+
+  return Object.fromEntries(Object.entries(source).map(([type, meals]) => {
+    const safeMeals = meals.filter((meal) =>
+      !avoidTerms.some((term) =>
+        meal.name.toLowerCase().includes(term) ||
+        meal.ingredients.some((ingredient) => ingredient.toLowerCase().includes(term))
+      )
+    );
+
+    return [type, safeMeals.length ? safeMeals : fallback[type]];
+  }));
+}
+
+function buildGroceryList(weekPlan) {
+  const totals = {};
+
+  weekPlan.forEach((day) => {
+    day.entries.forEach((entry) => {
+      Object.entries(entry.grocery).forEach(([item, amount]) => {
+        totals[item] = (totals[item] || 0) + amount;
+      });
+    });
+  });
+
+  const categories = Object.fromEntries(Object.keys(CATEGORY_MAP).map((category) => [category, []]));
+
+  Object.entries(totals)
+    .sort(([a], [b]) => a.localeCompare(b))
+    .forEach(([item, amount]) => {
+      const category = findCategory(item);
+      categories[category].push(formatGroceryLine(item, amount));
+    });
+
+  return categories;
+}
+
+function findCategory(item) {
+  const entry = Object.entries(CATEGORY_MAP).find(([, items]) => items.includes(item));
+  return entry ? entry[0] : "Pantry";
+}
+
+function formatGroceryLine(item, amount) {
+  const rounded = Math.ceil(amount * 2) / 2;
+  const label = GROCERY_LABELS[item] || item;
+  const unit = rounded === 1 ? label : pluralizeLabel(label);
+  return `${rounded} ${unit}`;
+}
+
+function pluralizeLabel(label) {
+  if (label.endsWith("ch")) return `${label}es`;
+  if (label.endsWith("y")) return `${label.slice(0, -1)}ies`;
+  if (label.endsWith("s")) return label;
+  return `${label}s`;
+}
+
+function renderPlan(profile, plan) {
+  emptyState.classList.add("hidden");
+  results.classList.remove("hidden");
+
+  summary.innerHTML = [
+    summaryCard("Daily calories", `${plan.stats.calories}`, `${profile.goal} target based on your stats`),
+    summaryCard("Protein", `${plan.stats.protein}g`, "Supports muscle retention and fullness"),
+    summaryCard("Carbs", `${plan.stats.carbs}g`, "Fuel for workouts and recovery"),
+    summaryCard("Goal weight", `${profile.goalWeight} lb`, profile.goal === "maintain"
+      ? "Weight-maintenance setup"
+      : `About ${plan.stats.estimatedWeeks} week${plan.stats.estimatedWeeks === 1 ? "" : "s"} to reach the target at a steady pace`)
+  ].join("");
+
+  mealPlan.innerHTML = `
+    <div class="panel-heading">
+      <h2>7-day meal plan</h2>
+      <p class="meal-notes">Meals are rotated for variety and aligned to your chosen diet style.</p>
+    </div>
+    ${plan.meals.map(renderDayCard).join("")}
+  `;
+
+  groceryList.innerHTML = `
+    <div class="panel-heading">
+      <h2>Supermarket list</h2>
+      <p class="grocery-note">${profile.store ? `Suggested for ${profile.store}. ` : ""}Quantities are summed for the full week so you know how much to buy.</p>
+    </div>
+    <div class="grocery-grid">
+      ${Object.entries(plan.grocery).map(([category, items]) => `
+        <article class="grocery-card">
+          <h3>${category}</h3>
+          <ul>${items.map((item) => `<li>${item}</li>`).join("")}</ul>
+        </article>
+      `).join("")}
+    </div>
+  `;
+}
+
+function summaryCard(title, value, note) {
+  return `
+    <article class="summary-card">
+      <h3>${title}</h3>
+      <strong>${value}</strong>
+      <p>${note}</p>
+    </article>
+  `;
+}
+
+function renderDayCard(day) {
+  return `
+    <article class="day-card">
+      <div class="day-card-header">
+        <h3>${day.day}</h3>
+        <span>${day.totals.calories} cal | ${day.totals.protein}g protein</span>
+      </div>
+      <div class="meal-list">
+        ${day.entries.map((entry) => `
+          <div class="meal-entry">
+            <strong>${capitalize(entry.type)}: ${entry.name}</strong>
+            <div>${entry.macros.calories} cal | ${entry.macros.protein}P / ${entry.macros.carbs}C / ${entry.macros.fat}F</div>
+            <div>${entry.ingredients.join(", ")}</div>
+            <details class="recipe-details">
+              <summary>Recipe</summary>
+              <ol>${getRecipeSteps(entry).map((step) => `<li>${step}</li>`).join("")}</ol>
+            </details>
+          </div>
+        `).join("")}
+      </div>
+    </article>
+  `;
+}
+
+function capitalize(value) {
+  return value.charAt(0).toUpperCase() + value.slice(1);
+}
+
+function getRecipeSteps(entry) {
+  return RECIPE_LIBRARY[entry.name] || [
+    "Prepare the ingredients listed for this meal.",
+    "Cook the protein, carb, and vegetables using your preferred simple method.",
+    "Plate everything together and adjust seasonings to taste."
+  ];
+}
+
+form.dispatchEvent(new Event("submit"));
+  </script>
+</body>
+</html>
